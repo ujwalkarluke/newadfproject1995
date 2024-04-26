@@ -1,0 +1,9 @@
+{
+	"name": "df-project1995",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "224eacfa-dfba-4b08-a911-021439c2e1ff",
+		"tenantId": "1a7529a1-0433-4ae9-bb28-00e32ebcd274"
+	}
+}
