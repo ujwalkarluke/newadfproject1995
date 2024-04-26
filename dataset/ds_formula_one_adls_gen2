@@ -1,0 +1,46 @@
+{
+	"name": "ds_formula_one_adls_gen2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_adls_formulaone_json_sink",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"directory_path": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@dataset().directory_path",
+					"type": "Expression"
+				},
+				"fileSystem": "formulaone"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"constructorId": {
+					"type": "integer"
+				},
+				"constructorRef": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"nationality": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
