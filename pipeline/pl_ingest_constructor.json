@@ -1,0 +1,65 @@
+{
+	"name": "pl_ingest_constructor",
+	"properties": {
+		"activities": [
+			{
+				"name": "act_copy_data_constructors_from_api_to_adls",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_http_api",
+						"type": "DatasetReference",
+						"parameters": {
+							"relative_url": "constructors.json?limit=10000"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_formula_one_adls_gen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"directory_path": "@concat('bronze/constructors/',string(utcNow('yyyyMMdd')))"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "ingest"
+		},
+		"annotations": []
+	}
+}

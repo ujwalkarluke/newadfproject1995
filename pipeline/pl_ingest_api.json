@@ -1,0 +1,243 @@
+{
+	"name": "pl_ingest_api",
+	"properties": {
+		"activities": [
+			{
+				"name": "act_web_get_seasondata",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": "http://ergast.com/api/f1/seasons.json"
+				}
+			},
+			{
+				"name": "act_copy_data_from_api_to_adls",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "act_web_get_seasondata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_http_api",
+						"type": "DatasetReference",
+						"parameters": {
+							"relative_url": "seasons.json?limit=100"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_formula_one_adls_gen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"directory_path": {
+								"value": "@concat('bronze/seasons/',string(utcNow('yyyyMMdd')))",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "act_lookup_readfile_content",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "act_copy_data_from_api_to_adls",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "ds_http_api",
+						"type": "DatasetReference",
+						"parameters": {
+							"relative_url": "seasons.json?limit=100"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "act_ForEach_season",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "act_lookup_readfile_content",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('act_lookup_readfile_content').output.value[0].MRData.SeasonTable.Seasons",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "act_copy_data_race_result",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "MergeFiles"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_http_api",
+									"type": "DatasetReference",
+									"parameters": {
+										"relative_url": {
+											"value": "@concat(item()['season'],'.json')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_formula_one_adls_gen2",
+									"type": "DatasetReference",
+									"parameters": {
+										"directory_path": {
+											"value": "@concat(concat('bronze/','races/'),string(utcNow('yyyyMMdd')))",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Execute Pipeline1",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "act_copy_data_race_result",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "pl_ingest_race_result",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"season_year": {
+				"type": "Integer",
+				"defaultValue": 1950
+			}
+		},
+		"folder": {
+			"name": "ingest"
+		},
+		"annotations": []
+	}
+}

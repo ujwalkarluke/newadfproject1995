@@ -1,0 +1,340 @@
+{
+	"name": "pl_ingest_race_result",
+	"properties": {
+		"activities": [
+			{
+				"name": "act_for_each_racedata",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "act_lookup_racedata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('act_lookup_racedata').output.value[0].MRData.RaceTable.Races",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "act_copydata_race_result",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "MergeFiles"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_http_api",
+									"type": "DatasetReference",
+									"parameters": {
+										"relative_url": {
+											"value": "@concat(concat(concat(concat(item().season,'/'),item().round),'/results'),'.json')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_formula_one_adls_gen2",
+									"type": "DatasetReference",
+									"parameters": {
+										"directory_path": {
+											"value": "@concat(concat(concat('bronze/','results/'),string(utcNow('yyyyMMdd/'))))",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "act_copydata_qualifying_result",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "act_copydata_race_result",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "MergeFiles"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_http_api",
+									"type": "DatasetReference",
+									"parameters": {
+										"relative_url": {
+											"value": "@concat(concat(concat(concat(item().season,'/'),item().round),'/qualifying'),'.json')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_formula_one_adls_gen2",
+									"type": "DatasetReference",
+									"parameters": {
+										"directory_path": {
+											"value": "@concat(concat(concat('bronze/','qualifying/'),string(utcNow('yyyyMMdd/'))))",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "act_copydata_pitstops",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "act_copydata_qualifying_result",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "MergeFiles"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_http_api",
+									"type": "DatasetReference",
+									"parameters": {
+										"relative_url": {
+											"value": "@concat(concat(concat(concat(item().season,'/'),item().round),'/pitstops'),'.json')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_formula_one_adls_gen2",
+									"type": "DatasetReference",
+									"parameters": {
+										"directory_path": {
+											"value": "@concat(concat(concat('bronze/','pitstops/'),string(utcNow('yyyyMMdd/'))))",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "act_copydata_laptimes",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "act_copydata_pitstops",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "MergeFiles"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_http_api",
+									"type": "DatasetReference",
+									"parameters": {
+										"relative_url": {
+											"value": "@concat(concat(concat(concat(item().season,'/'),item().round),'/laps'),'.json')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_formula_one_adls_gen2",
+									"type": "DatasetReference",
+									"parameters": {
+										"directory_path": {
+											"value": "@concat(concat(concat('bronze/','laptimes/'),string(utcNow('yyyyMMdd/'))))",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "act_lookup_racedata",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@concat('bronze/races/',string(utcNow('yyyyMMdd')))",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.json",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "ds_formula_one_adls_gen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"directory_path": {
+								"value": "@concat('bronze/races/',string(utcNow('yyyyMMdd')))",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"parameters": {
+			"season_year": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "ingest"
+		},
+		"annotations": []
+	}
+}
