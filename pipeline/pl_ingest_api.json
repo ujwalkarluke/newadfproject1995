@@ -126,6 +126,8 @@
 			{
 				"name": "act_ForEach_season",
 				"type": "ForEach",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "act_lookup_readfile_content",
@@ -140,7 +142,7 @@
 						"value": "@activity('act_lookup_readfile_content').output.value[0].MRData.SeasonTable.Seasons",
 						"type": "Expression"
 					},
-					"isSequential": true,
+					"isSequential": false,
 					"activities": [
 						{
 							"name": "act_copy_data_race_result",

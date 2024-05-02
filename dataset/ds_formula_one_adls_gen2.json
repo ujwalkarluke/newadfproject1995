@@ -2,7 +2,7 @@
 	"name": "ds_formula_one_adls_gen2",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ls_adls_formulaone_json_sink",
+			"referenceName": "AzureDataLakeStorage1",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
