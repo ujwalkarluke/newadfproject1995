@@ -126,8 +126,6 @@
 			{
 				"name": "act_ForEach_season",
 				"type": "ForEach",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "act_lookup_readfile_content",

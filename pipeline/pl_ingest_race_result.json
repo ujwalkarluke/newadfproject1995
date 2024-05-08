@@ -327,11 +327,6 @@
 				}
 			}
 		],
-		"parameters": {
-			"season_year": {
-				"type": "string"
-			}
-		},
 		"folder": {
 			"name": "ingest"
 		},

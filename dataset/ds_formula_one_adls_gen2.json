@@ -18,8 +18,7 @@
 				"folderPath": {
 					"value": "@dataset().directory_path",
 					"type": "Expression"
-				},
-				"fileSystem": "formulaone"
+				}
 			}
 		},
 		"schema": {
