@@ -5,8 +5,8 @@
 		"annotations": [],
 		"type": "AzureBlobFS",
 		"typeProperties": {
-			"url": "https://storageformulaoneproject.dfs.core.windows.net/",
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEFCQTdERkQ2LTNEQ0ItNEQxRC1BNEVBLTk2ODQzRjg4REU4OF9lMWVkY2ZlNC0xMDg4LTQzZjgtOWEzMS01YTk1MWViOWU4NmQiDQp9"
+			"url": "https://storageadfproject1995.dfs.core.windows.net/",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQENDRkJEMDVCLThBN0MtNDFCNy1BOEU5LTUxODdFODM1RkM0NV85NDRjZDFkZC1lMWQ5LTQ4ZWQtYjMzOS05OTgxZGQ5YzQ3OGMiDQp9"
 		}
 	}
 }
