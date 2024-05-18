@@ -61,7 +61,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"relative_url": {
-											"value": "@concat(concat(concat(concat(item().season,'/'),item().round),'/results'),'.json')",
+											"value": "@concat(concat(concat(concat(pipeline().parameters.season_year,'/'),item().round),'/results'),'.json')",
 											"type": "Expression"
 										}
 									}
@@ -74,6 +74,10 @@
 									"parameters": {
 										"directory_path": {
 											"value": "@concat(concat(concat('bronze/','results/'),string(utcNow('yyyyMMdd/'))))",
+											"type": "Expression"
+										},
+										"file_name": {
+											"value": "@concat('race_result_',pipeline().parameters.season_year,'_' , item().round,'.json')",
 											"type": "Expression"
 										}
 									}
@@ -128,7 +132,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"relative_url": {
-											"value": "@concat(concat(concat(concat(item().season,'/'),item().round),'/qualifying'),'.json')",
+											"value": "@concat(concat(concat(concat(pipeline().parameters.season_year,'/'),item().round),'/qualifying'),'.json')",
 											"type": "Expression"
 										}
 									}
@@ -141,6 +145,10 @@
 									"parameters": {
 										"directory_path": {
 											"value": "@concat(concat(concat('bronze/','qualifying/'),string(utcNow('yyyyMMdd/'))))",
+											"type": "Expression"
+										},
+										"file_name": {
+											"value": "@concat('qualifying_result_',pipeline().parameters.season_year,'_' , item().round,'.json')",
 											"type": "Expression"
 										}
 									}
@@ -195,7 +203,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"relative_url": {
-											"value": "@concat(concat(concat(concat(item().season,'/'),item().round),'/pitstops'),'.json')",
+											"value": "@concat(concat(concat(concat(pipeline().parameters.season_year,'/'),item().round),'/pitstops'),'.json')",
 											"type": "Expression"
 										}
 									}
@@ -208,6 +216,10 @@
 									"parameters": {
 										"directory_path": {
 											"value": "@concat(concat(concat('bronze/','pitstops/'),string(utcNow('yyyyMMdd/'))))",
+											"type": "Expression"
+										},
+										"file_name": {
+											"value": "@concat('pitstops_',pipeline().parameters.season_year,'_' , item().round,'.json')",
 											"type": "Expression"
 										}
 									}
@@ -262,7 +274,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"relative_url": {
-											"value": "@concat(concat(concat(concat(item().season,'/'),item().round),'/laps'),'.json')",
+											"value": "@concat(concat(concat(concat(pipeline().parameters.season_year,'/'),item().round),'/laps'),'.json')",
 											"type": "Expression"
 										}
 									}
@@ -275,6 +287,10 @@
 									"parameters": {
 										"directory_path": {
 											"value": "@concat(concat(concat('bronze/','laptimes/'),string(utcNow('yyyyMMdd/'))))",
+											"type": "Expression"
+										},
+										"file_name": {
+											"value": "@concat('laptimes_',pipeline().parameters.season_year,'_' , item().round,'.json')",
 											"type": "Expression"
 										}
 									}
@@ -320,6 +336,10 @@
 							"directory_path": {
 								"value": "@concat('bronze/races/',string(utcNow('yyyyMMdd')))",
 								"type": "Expression"
+							},
+							"file_name": {
+								"value": "@concat('race_',pipeline().parameters.season_year, '.json')",
+								"type": "Expression"
 							}
 						}
 					},
@@ -327,6 +347,12 @@
 				}
 			}
 		],
+		"parameters": {
+			"season_year": {
+				"type": "string",
+				"defaultValue": "1996"
+			}
+		},
 		"folder": {
 			"name": "ingest"
 		},

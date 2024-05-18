@@ -78,6 +78,10 @@
 							"directory_path": {
 								"value": "@concat('bronze/seasons/',string(utcNow('yyyyMMdd')))",
 								"type": "Expression"
+							},
+							"file_name": {
+								"value": "@concat('seasons', '.json')",
+								"type": "Expression"
 							}
 						}
 					}
@@ -197,6 +201,10 @@
 										"directory_path": {
 											"value": "@concat(concat('bronze/','races/'),string(utcNow('yyyyMMdd')))",
 											"type": "Expression"
+										},
+										"file_name": {
+											"value": "@concat('race_', item().season,'.json')",
+											"type": "Expression"
 										}
 									}
 								}
@@ -231,8 +239,7 @@
 		],
 		"variables": {
 			"season_year": {
-				"type": "Integer",
-				"defaultValue": 1950
+				"type": "Integer"
 			}
 		},
 		"folder": {
