@@ -19,6 +19,7 @@
 						"value": "@activity('act_lookup_racedata').output.value[0].MRData.RaceTable.Races",
 						"type": "Expression"
 					},
+					"batchCount": 50,
 					"activities": [
 						{
 							"name": "act_copydata_race_result",
@@ -46,8 +47,7 @@
 								"sink": {
 									"type": "JsonSink",
 									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings",
-										"copyBehavior": "MergeFiles"
+										"type": "AzureBlobFSWriteSettings"
 									},
 									"formatSettings": {
 										"type": "JsonWriteSettings"
@@ -61,7 +61,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"relative_url": {
-											"value": "@concat(concat(concat(concat(item().season,'/'),item().round),'/results'),'.json')",
+											"value": "@concat(concat(concat(concat(pipeline().parameters.season_year,'/'),item().round),'/results'))",
 											"type": "Expression"
 										}
 									}
@@ -74,6 +74,10 @@
 									"parameters": {
 										"directory_path": {
 											"value": "@concat(concat(concat('bronze/','results/'),string(utcNow('yyyyMMdd/'))))",
+											"type": "Expression"
+										},
+										"file_name": {
+											"value": "@concat(pipeline().parameters.season_year,'_round_',item().round,'.json')",
 											"type": "Expression"
 										}
 									}
@@ -128,7 +132,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"relative_url": {
-											"value": "@concat(concat(concat(concat(item().season,'/'),item().round),'/qualifying'),'.json')",
+											"value": "@concat(concat(concat(concat(pipeline().parameters.season_year,'/'),item().round),'/qualifying'))",
 											"type": "Expression"
 										}
 									}
@@ -141,6 +145,10 @@
 									"parameters": {
 										"directory_path": {
 											"value": "@concat(concat(concat('bronze/','qualifying/'),string(utcNow('yyyyMMdd/'))))",
+											"type": "Expression"
+										},
+										"file_name": {
+											"value": "@concat(pipeline().parameters.season_year,'_round_',item().round,'.json')",
 											"type": "Expression"
 										}
 									}
@@ -195,7 +203,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"relative_url": {
-											"value": "@concat(concat(concat(concat(item().season,'/'),item().round),'/pitstops'),'.json')",
+											"value": "@concat(concat(concat(concat(pipeline().parameters.season_year,'/'),item().round),'/pitstops'))",
 											"type": "Expression"
 										}
 									}
@@ -208,6 +216,10 @@
 									"parameters": {
 										"directory_path": {
 											"value": "@concat(concat(concat('bronze/','pitstops/'),string(utcNow('yyyyMMdd/'))))",
+											"type": "Expression"
+										},
+										"file_name": {
+											"value": "@concat(pipeline().parameters.season_year,'_round_',item().round,'.json')",
 											"type": "Expression"
 										}
 									}
@@ -247,8 +259,7 @@
 								"sink": {
 									"type": "JsonSink",
 									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings",
-										"copyBehavior": "MergeFiles"
+										"type": "AzureBlobFSWriteSettings"
 									},
 									"formatSettings": {
 										"type": "JsonWriteSettings"
@@ -262,7 +273,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"relative_url": {
-											"value": "@concat(concat(concat(concat(item().season,'/'),item().round),'/laps'),'.json')",
+											"value": "@concat(concat(concat(concat(pipeline().parameters.season_year,'/'),item().round),'/laps'))",
 											"type": "Expression"
 										}
 									}
@@ -275,6 +286,10 @@
 									"parameters": {
 										"directory_path": {
 											"value": "@concat(concat(concat('bronze/','laptimes/'),string(utcNow('yyyyMMdd/'))))",
+											"type": "Expression"
+										},
+										"file_name": {
+											"value": "@concat(pipeline().parameters.season_year,'_round_',item().round,'.json')",
 											"type": "Expression"
 										}
 									}
@@ -320,6 +335,10 @@
 							"directory_path": {
 								"value": "@concat('bronze/races/',string(utcNow('yyyyMMdd')))",
 								"type": "Expression"
+							},
+							"file_name": {
+								"value": "@concat('race_',pipeline().parameters.season_year,'.json')",
+								"type": "Expression"
 							}
 						}
 					},
@@ -329,7 +348,8 @@
 		],
 		"parameters": {
 			"season_year": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "1950"
 			}
 		},
 		"folder": {

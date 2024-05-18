@@ -16,7 +16,7 @@
 			"location": {
 				"type": "HttpServerLocation",
 				"relativeUrl": {
-					"value": "@concat(dataset().relative_url)",
+					"value": "@concat(dataset().relative_url,'.json?limit=10000')",
 					"type": "Expression"
 				}
 			}
